@@ -22,7 +22,7 @@ io.on('connection', async (socket) => {
 
         console.log(`Print all devices onto the UI of client ${socketId}`)
         connectedDevices.forEach(ipAddress =>
-            io.to(socket.id).emit("DeviceConnection", ipAddress))
+            io.to(socket.id).emit("AddIpAddress", ipAddress))
     });
 });
 
@@ -45,12 +45,10 @@ function updateDatabaseByInserting(ipAddress) {
 }
 
 function updateClientsAboutConnectionOf(ipAddress) {
-    io.emit("DeviceConnection", ipAddress)
+    io.emit("AddIpAddress", ipAddress)
     console.log(`Wristband with IP Address ${ipAddress} trys to connect`)
 }
 
 function flashDisplayOfWristbandBy(ipAddress) {
     //TODO call the REST interface of the wristband
-    console.log("All Devices:")
-    connectedDevices.forEach(device => console.log(device))
 }
