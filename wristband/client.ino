@@ -3,31 +3,68 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ArduinoJson.h>
-
+#include <HTTPClient.h>
 
 WebServer server(80);
 StaticJsonDocument<250> jsonDocument;
 char buffer[250];
 float temperature;
- 
+String response = "";
+DynamicJsonDocument doc(2048);
+String ip; 
+const String waroma_server = "192.168.0.185:3000";
+
 void loop() {    
   server.handleClient();     
 }
 
 void setup() {     
   Serial.begin(115200); 
+  Serial.println("Connecting to Wi-Fi");
+  connectToWiFi();
+  Serial.println("Connected! IP Address: " + ip);
+  connectToServer();
+  Serial.println((String)"Connected to " + waroma_server);
+  setup_routing();     
+}    
 
-  Serial.print("Connecting to Wi-Fi");
+void connectToWiFi(){
+  //WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
   }
- 
-  Serial.print("Connected! IP Address: ");
-  Serial.println(WiFi.localIP());
-  setup_routing();     
-}    
+   ip = getIpAsStringOf(WiFi.localIP());
+}
+
+String getIpAsStringOf(const IPAddress& ipAddress) {
+  return (String)ipAddress[0] + "." + (String)ipAddress[1] + "." + (String)ipAddress[2] + "." + (String)ipAddress[3];
+}
+
+void connectToServer(){
+  HTTPClient http;
+  String request = "http://"+waroma_server+"/connect/"+ip; 
+  delay(1000);
+  http.begin(request);
+  http.GET();
+  /*
+  // The rest is for retrieving data
+  //Response from server
+  response = http.getString();
+  //Parse JSON, read error if any
+  DeserializationError error = deserializeJson(doc, response);
+  if(error) {
+     Serial.print(F("deserializeJson() failed: "));
+     Serial.println(error.f_str());
+     return;
+  }
+  //Print parsed value on Serial Monitor
+  Serial.println(doc["value"].as<char*>());
+  */
+  //Close connection  
+  http.end();
+}
        
 
 void setup_routing() {     
