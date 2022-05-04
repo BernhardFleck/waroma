@@ -8,6 +8,7 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
+const fetch = require('node-fetch');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let connectedDevices = []
@@ -49,6 +50,13 @@ function updateClientsAboutConnectionOf(ipAddress) {
     console.log(`Wristband with IP Address ${ipAddress} trys to connect`)
 }
 
-function flashDisplayOfWristbandBy(ipAddress) {
-    //TODO call the REST interface of the wristband
+async function flashDisplayOfWristbandBy(ipAddress) {
+    const request = `http://${ipAddress}/temperature`
+    const response = await fetch(request);
+    if (!response.ok) 
+        console.log('Error with request: ' + response.statusText);
+        //io.emit
+    const data = await response.json();
+    const jsonResult = JSON.stringify(data)
+    console.log(jsonResult)
 }
