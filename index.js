@@ -28,7 +28,6 @@ io.on('connection', async (socket) => {
 });
 
 app.get("/connect/:ip", (request, response) => {
-
     let ipAddress = request.params.ip
     let databaseDoesNotContainIp = !connectedDevices.includes(ipAddress)
 
@@ -51,12 +50,16 @@ function updateClientsAboutConnectionOf(ipAddress) {
 }
 
 async function flashDisplayOfWristbandBy(ipAddress) {
-    const request = `http://${ipAddress}/temperature`
+    //const request = `http://${ipAddress}/flashDisplay`
+    const request = `http://${ipAddress}/displayRoom/K`
     const response = await fetch(request);
-    if (!response.ok) 
+    if (!response.ok)
         console.log('Error with request: ' + response.statusText);
-        //io.emit
+    //io.emit
+    /* 
+    //for reading data
     const data = await response.json();
     const jsonResult = JSON.stringify(data)
     console.log(jsonResult)
+    */
 }
