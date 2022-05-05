@@ -62,7 +62,6 @@ void connectToServer() {
   httpClient.end();
 }
 
-
 void setupEndpoints() {
   server.on("/flashDisplay", flashDisplay);
   server.on(UriBraces("/displayRoom/{}"), []() {
@@ -85,6 +84,8 @@ void flashDisplay() {
 }
 
 void displayRoom(String alphanumericLetter) {
+  screen.setCursor(0,0);
+  screen.fillScreen(TFT_BLACK);
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
   screen.setTextDatum(MC_DATUM);
   screen.setTextSize(3);
