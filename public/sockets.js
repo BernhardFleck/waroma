@@ -5,9 +5,14 @@ $(document).ready(function () {
     console.log("Requested all devices")
 
     socket.on('AddIpAddress', function (ipAddress) {
-        let newListNode = document.createElement('li');
-        newListNode.textContent = ipAddress;
-        $('#deviceList').append(newListNode)
-    });
+        $('#deviceList').append($('<li>', {
+            text: ipAddress
+        }));
 
+        $('#patientsDropdown').append($('<option>', {
+            value: ipAddress,
+            text: ipAddress
+        }));
+    });
 });
+

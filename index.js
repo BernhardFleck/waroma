@@ -20,7 +20,6 @@ io.on('connection', async (socket) => {
     console.log(`Client connected: ${socketId}`)
 
     socket.on('GetAllDevices', function () {
-
         console.log(`Print all devices onto the UI of client ${socketId}`)
         connectedDevices.forEach(ipAddress =>
             io.to(socket.id).emit("AddIpAddress", ipAddress))
@@ -34,7 +33,7 @@ app.get("/connect/:ip", (request, response) => {
     if (databaseDoesNotContainIp) {
         updateDatabaseByInserting(ipAddress)
         updateClientsAboutConnectionOf(ipAddress)
-        flashDisplayOfWristbandBy(ipAddress)
+        //flashDisplayOfWristbandBy(ipAddress)
     }
 
     response.end()
@@ -50,9 +49,8 @@ function updateClientsAboutConnectionOf(ipAddress) {
 }
 
 async function flashDisplayOfWristbandBy(ipAddress) {
-    //const request = `http://${ipAddress}/flashDisplay`
-    const request = `http://${ipAddress}/displayRoom/K`
-    const response = await fetch(request);
+    const request = `http://${ipAddress}/flashDisplay`
+    const response = await fetch(request)
     if (!response.ok)
         console.log('Error with request: ' + response.statusText);
     //io.emit
@@ -62,4 +60,22 @@ async function flashDisplayOfWristbandBy(ipAddress) {
     const jsonResult = JSON.stringify(data)
     console.log(jsonResult)
     */
+}
+
+app.get("/sendPatientToRoom", (request, response) => {
+    let patientsIP = request.query.patientsDropdown
+    let room = request.query.roomNumberField
+
+    console.log(`Send patient with ip ${patientsIP} to room ${room}`)
+    sendPatientToRoom(patientsIP, room)
+
+    response.end()
+})
+
+async function sendPatientToRoom(ipAddress, room){
+    const singleLetter = room.charAt(0)
+    const request = `http://${ipAddress}/displayRoom/${singleLetter}`
+    const response = await fetch(request);
+    if (!response.ok)
+        console.log('Error with request: ' + response.statusText)
 }
