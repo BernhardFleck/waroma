@@ -8,17 +8,17 @@ $(document).ready(function () {
             value: ipAddress,
             text: ipAddress
         }));
-
-        $('#patientsDropdown').append($('<option>', {
-            value: ipAddress,
-            text: ipAddress
-        }));
     });
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
         $('#connectedPatients').append($('<li>', {
-            text: firstName + lastName + birthday + ipAddress,
+            text: `(${ipAddress}) ${firstName} ${lastName} ${birthday}`,
             class: "list-group-item"
+        }));
+
+        $('#patientsDropdown').append($('<option>', {
+            value: ipAddress,
+            text: `(${ipAddress}) ${firstName} ${lastName} ${birthday}`
         }));
     });
 

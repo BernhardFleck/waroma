@@ -82,15 +82,14 @@ app.get("/sendPatientToRoom", (request, response) => {
     let patientsIP = request.query.patientsDropdown
     let room = request.query.roomNumberField
 
-    console.log(`Send patient with ip ${patientsIP} to room ${room}`)
-    if (ipAddress && room && room != " ")
+    if (patientsIP && room && room != " ")
         sendPatientToRoom(patientsIP, room)
 
     response.end()
 })
 
 async function sendPatientToRoom(ipAddress, room) {
-    console.log("request")
+    console.log("request" + ipAddress + room)
     /*
     const singleLetter = room.charAt(0)
     const request = `http://${ipAddress}/displayRoom/${singleLetter}`
