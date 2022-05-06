@@ -1,0 +1,19 @@
+{
+  border: 1px solid black;  
+}
+
+.smallWidth{
+  width: 10px;
+}
+
+.border-radius{
+  border-radius: 10px;
+}
+
+.floatRight{
+  float: right;
+}
+
+.floatLeft{
+  float: left;
+}
