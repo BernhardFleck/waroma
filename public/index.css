@@ -1,19 +1,29 @@
 {
-  border: 1px solid black;  
+  border: 1px solid black;
 }
 
-.smallWidth{
+.smallWidth {
   width: 10px;
 }
 
-.border-radius{
+.border-radius {
   border-radius: 10px;
 }
 
-.floatRight{
+.floatRight {
   float: right;
 }
 
-.floatLeft{
+.floatLeft {
   float: left;
+}
+
+.alignLeft {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+.alignRight {
+  margin-left: auto !important;
+  margin-right: 0 !important;
 }
