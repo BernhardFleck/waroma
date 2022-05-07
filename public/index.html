@@ -26,84 +26,86 @@
 <body>
   <div class="container-fluid">
     <div class="row">
+
       <div class="col col-lg-7">
-        <div>
+        <div class="container">
+          <div class="row card p-3 m-1">
+            <h3>Assigned Patients:</h3>
 
-          
-          <ul id="connectedPatients" class="list-group">
-            
-          </ul>
+            <ul id="connectedPatients" class="list-group list-group-flush">
+              <!-- Content will be generated via socket -->
+            </ul>
 
+          </div>
         </div>
       </div>
       <div class="col col-lg-5">
+        <div class="container">
 
-          <div class="container">
+          <!-- Connect Patient To Wristband -->
+          <div class="row card p-3 m-1">
+            <h3>Assign Patient-Wristband:</h3>
+            <div class="input-group pb-1">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">First Name:</span>
+              </div>
+              <input id="firstNameField" name="firstName" type="text" class="form-control" placeholder="Jane"
+                aria-label="FirstName" aria-describedby="basic-addon1" />
 
-            <!-- Connect Patient To Wristband -->
-            <div class="row card p-3 m-1">
-                <h3>Assign Patient-Wristband:</h3>
-                <div class="input-group pb-1">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">First Name:</span>
-                  </div>
-                  <input id="firstNameField" name="firstName" type="text" class="form-control" placeholder="Jane" aria-label="FirstName"
-                    aria-describedby="basic-addon1" />
-
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Last Name:</span>
-                  </div>
-                  <input id="lastNameField" name="lastName" type="text" class="form-control" placeholder="Doe" aria-label="LastName"
-                    aria-describedby="basic-addon1" />
-                </div>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Birthday:</span>
-                  </div>
-                  <input id="birthdayField" name="birthday" type="date" class="form-control" aria-label="Birthday"
-                    aria-describedby="basic-addon1" />
-
-                  <select name="deviceList" id="deviceList" class="custom-select">
-                    <!-- Content will be provided via socket -->
-                  </select>
-
-                  <div class="input-group-append">
-                    <button onclick="flashWristband()" class="btn btn-outline-secondary">Flash</button>
-                  </div>
-
-                  <div class="input-group-append">
-                    <button onclick="assignPatientToWristband()" class="btn btn-primary">Send</button>
-                  </div>
-                </div>
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Last Name:</span>
+              </div>
+              <input id="lastNameField" name="lastName" type="text" class="form-control" placeholder="Doe"
+                aria-label="LastName" aria-describedby="basic-addon1" />
             </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Birthday:</span>
+              </div>
+              <input id="birthdayField" name="birthday" type="date" class="form-control" aria-label="Birthday"
+                aria-describedby="basic-addon1" />
 
-            <!-- Send Patient To Room  -->
-            <div class="row card p-3 m-1">
-              <form method="get" action="/sendPatientToRoom" target="hiddenFrame">
-                <h3>Send Patient To Room:</h3>
-                <div class="input-group">
+              <select name="deviceList" id="deviceList" class="custom-select">
+                <!-- Content will be provided via socket -->
+              </select>
 
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Room</span>
-                  </div>
+              <div class="input-group-append">
+                <button onclick="flashWristband()" class="btn btn-outline-secondary">Flash</button>
+              </div>
 
-                  <input name="roomNumberField" maxlength="1" placeholder="1" type="text"
-                    class="form-control smallWidth" aria-label="Room number" aria-describedby="basic-addon1" />
-
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">Patient:</span>
-                  </div>
-
-                  <select name="patientsDropdown" id="patientsDropdown" class="custom-select">
-                    <!-- Content will be provided via socket -->
-                  </select>
-
-                  <div class="input-group-append">
-                    <button type="submit" value="Submit" class="btn btn-primary">Send</button>
-                  </div>
-                </div>
-              </form>
+              <div class="input-group-append">
+                <button onclick="assignPatientToWristband()" class="btn btn-primary">Send</button>
+              </div>
             </div>
+          </div>
+
+          <!-- Send Patient To Room  -->
+          <div class="row card p-3 m-1">
+            <form method="get" action="/sendPatientToRoom" target="hiddenFrame">
+              <h3>Send Patient To Room:</h3>
+              <div class="input-group">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Room</span>
+                </div>
+
+                <input name="roomNumberField" maxlength="1" placeholder="1" type="text" class="form-control smallWidth"
+                  aria-label="Room number" aria-describedby="basic-addon1" />
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Patient:</span>
+                </div>
+
+                <select name="patientsDropdown" id="patientsDropdown" class="custom-select">
+                  <!-- Content will be provided via socket -->
+                </select>
+
+                <div class="input-group-append">
+                  <button type="submit" value="Submit" class="btn btn-primary">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
 
         </div>
       </div>

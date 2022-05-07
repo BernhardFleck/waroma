@@ -11,8 +11,8 @@ const PORT = 3000;
 const fetch = require('node-fetch');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
-let connectedDevices = []
-let connectedPatients = []
+let connectedDevices = [] // format: ipAddresses only
+let connectedPatients = [] // format: { firstName, lastName, birthday, ipAddress }
 
 app.use(express.static('public'));
 http.listen(PORT, () => console.log(`server listening on port ${PORT}!`));
@@ -26,6 +26,12 @@ io.on('connection', async (socket) => {
             io.to(socket.id).emit("AddIpAddress", ipAddress))
     });
 
+    socket.on('GetAllConnectedPatients', function () {
+        console.log(`Print all patients onto the UI of client ${socketId}`)
+        connectedPatients.forEach( row =>
+            io.to(socket.id).emit("AddPatientConnection", row.firstName, row.lastName, row.birthday, row.ipAddress))
+    });
+
     socket.on('flashWristband', function (ipAddress) {
         flashDisplayOfWristbandBy(ipAddress)
     });
@@ -34,6 +40,7 @@ io.on('connection', async (socket) => {
         connectedPatients.push({ firstName, lastName, birthday, ipAddress })
         io.emit("AddPatientConnection", firstName, lastName, birthday, ipAddress)
         console.log(`Add a new row in patients table: ${firstName} ${lastName} ${birthday} ${ipAddress} `)
+        //TODO remove ip from connectedDevices, and rename this array to availableDevices
     });
 });
 

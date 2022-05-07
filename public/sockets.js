@@ -2,6 +2,7 @@ $(document).ready(function () {
     var socket = io();
 
     socket.emit("GetAllDevices")
+    socket.emit("GetAllConnectedPatients")
 
     socket.on('AddIpAddress', function (ipAddress) {
         $('#deviceList').append($('<option>', {
@@ -11,10 +12,12 @@ $(document).ready(function () {
     });
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
-        $('#connectedPatients').append($('<li>', {
+        $('#connectedPatients').append($('<button>', {
+            id: firstName + lastName + birthday,
             text: `(${ipAddress}) ${firstName} ${lastName} ${birthday}`,
-            class: "list-group-item"
-        }));
+            class: "list-group-item list-group-item-action",
+            type: "button"
+        }).on('click', () => preSelectFormOfSendingPatient(firstName, lastName, birthday, ipAddress)));
 
         $('#patientsDropdown').append($('<option>', {
             value: ipAddress,
@@ -23,6 +26,10 @@ $(document).ready(function () {
     });
 
 });
+
+function preSelectFormOfSendingPatient(firstName, lastName, birthday, ipAddress) {
+    $('#patientsDropdown option[value="' + ipAddress + '"]').prop('selected', true)
+}
 
 function flashWristband() {
     let selectedIP = $("#deviceList").val()
