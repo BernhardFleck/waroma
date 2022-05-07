@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var socket = io();
-
+    
     socket.emit("GetAllDevices")
     socket.emit("GetAllConnectedPatients")
 
@@ -12,22 +12,22 @@ $(document).ready(function () {
     });
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
-        $('#connectedPatients').append($('<button>', {
-            id: firstName + lastName + birthday,
-            text: `(${ipAddress}) ${firstName} ${lastName} ${birthday}`,
-            class: "list-group-item list-group-item-action",
-            type: "button"
-        }).on('click', () => preSelectFormOfSendingPatient(firstName, lastName, birthday, ipAddress)));
 
+        let newPatientEntry = $(`<button title="${ipAddress}"
+        onclick="preSelectFormBy('${ipAddress}')" 
+        type="button" id="${firstName + lastName + birthday}" 
+        class="list-group-item list-group-item-action">${firstName} ${lastName} ${birthday}</button>`)
+
+        $('#connectedPatients').append(newPatientEntry);
         $('#patientsDropdown').append($('<option>', {
             value: ipAddress,
-            text: `(${ipAddress}) ${firstName} ${lastName} ${birthday}`
+            text: `${firstName} ${lastName} ${birthday}`
         }));
     });
 
 });
 
-function preSelectFormOfSendingPatient(firstName, lastName, birthday, ipAddress) {
+function preSelectFormBy(ipAddress) {
     $('#patientsDropdown option[value="' + ipAddress + '"]').prop('selected', true)
 }
 
