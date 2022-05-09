@@ -13,14 +13,14 @@ $(document).ready(function () {
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
         let newPatientEntry = $(`
-            <li class="list-group-item list-group-item-action" style="cursor: pointer;">
-                <span title="${ipAddress}" onclick="preSelectFormBy('${ipAddress}')" type="button"
+            <button onclick="preSelectFormBy('${ipAddress}')" type="button" class="list-group-item list-group-item-action" style="cursor: pointer;">
+                <span title="${ipAddress}" 
                   id="${firstName + lastName + birthday}" class="">${firstName} ${lastName} ${birthday}</span>
                 <div class="progress">
                   <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated waromaColor" role="progressbar"
-                    aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">10%</div>
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
                 </div>
-            </li>
+            </button>
         `)
         $('#connectedPatients').append(newPatientEntry);
         $('#patientsDropdown').append($('<option>', {
