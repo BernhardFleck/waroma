@@ -8,6 +8,7 @@
 const express = require('express');
 const app = express();
 const PORT = 3000;
+const BATTERY_TIME_INTERVAL = 5000;
 const fetch = require('node-fetch');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
@@ -28,7 +29,7 @@ io.on('connection', async (socket) => {
 
     socket.on('GetAllConnectedPatients', function () {
         console.log(`Print all patients onto the UI of client ${socketId}`)
-        connectedPatients.forEach( row =>
+        connectedPatients.forEach(row =>
             io.to(socket.id).emit("AddPatientConnection", row.firstName, row.lastName, row.birthday, row.ipAddress))
     });
 
@@ -41,6 +42,7 @@ io.on('connection', async (socket) => {
         io.emit("AddPatientConnection", firstName, lastName, birthday, ipAddress)
         console.log(`Add a new row in patients table: ${firstName} ${lastName} ${birthday} ${ipAddress} `)
         //TODO remove ip from connectedDevices, and rename this array to availableDevices
+        setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
     });
 });
 
@@ -104,6 +106,12 @@ async function sendPatientToRoom(ipAddress, room) {
     if (!response.ok)
         console.log('Error with request: ' + response.statusText)
     */
+}
+
+async function readBatteryLevelFrom(ipAddress) {
+    let batteryValue = Math.floor(Math.random() * 101);
+    io.emit("batteryValue", ipAddress, batteryValue)
+    console.log(`battery level read from ${ipAddress}: ${batteryValue}%`)
 }
 
 

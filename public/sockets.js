@@ -12,17 +12,29 @@ $(document).ready(function () {
     });
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
-
-        let newPatientEntry = $(`<button title="${ipAddress}"
-        onclick="preSelectFormBy('${ipAddress}')" 
-        type="button" id="${firstName + lastName + birthday}" 
-        class="list-group-item list-group-item-action">${firstName} ${lastName} ${birthday}</button>`)
-
+        let newPatientEntry = $(`
+            <li class="list-group-item list-group-item-action" style="cursor: pointer;">
+                <span title="${ipAddress}" onclick="preSelectFormBy('${ipAddress}')" type="button"
+                  id="${firstName + lastName + birthday}" class="">${firstName} ${lastName} ${birthday}</span>
+                <div class="progress">
+                  <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                    aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">10%</div>
+                </div>
+            </li>
+        `)
         $('#connectedPatients').append(newPatientEntry);
         $('#patientsDropdown').append($('<option>', {
             value: ipAddress,
             text: `${firstName} ${lastName} ${birthday}`
         }));
+    });
+
+    socket.on('batteryValue', function (ipAddress, batteryValue) {
+        let idText = `BatteryOf${ipAddress}`
+        let batteryProgressBar = $('div[id="' + idText + '"]')
+        batteryProgressBar.attr('aria-valuenow', `${batteryValue}`)
+        batteryProgressBar.attr('style', `width: ${batteryValue}%`)
+        batteryProgressBar.text(`${batteryValue}%`)
     });
 
 });
