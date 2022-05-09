@@ -72,6 +72,7 @@ void setupEndpoints() {
 }
 
 void flashDisplay() {
+  turnOnDisplay();
   for (int i = 0; i < 2; i++) {
     screen.fillScreen(TFT_BLACK);
     delay(800);
@@ -79,12 +80,13 @@ void flashDisplay() {
     delay(800);
   }
   screen.fillScreen(TFT_BLACK);
-  //TODO TURN OFF DISPLAY FOR SAVING BATTERY
+  turnOffDisplay();
   server.send(200);
 }
 
 void displayRoom(String alphanumericLetter) {
-  screen.setCursor(0,0);
+  turnOnDisplay();
+  screen.setCursor(0, 0);
   screen.fillScreen(TFT_BLACK);
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
   screen.setTextDatum(MC_DATUM);
@@ -93,8 +95,25 @@ void displayRoom(String alphanumericLetter) {
   screen.println();
   screen.setTextSize(7); //max is 7, go into library for changing that
   screen.drawString((String)alphanumericLetter.charAt(0), screenWidth / 2, screenHeight / 2);
-  //TODO TURN OFF DISPLAY FOR SAVING BATTERY
+  delay(10 * 1000); //TODO remove this timer
+  turnOffDisplay();
   server.send(200);
+}
+
+void turnOnDisplay() {
+  digitalWrite(TFT_BL , HIGH); //backlight on
+  screen.writecommand(ST7735_DISPON);  // display on
+  delay(150);
+  screen.writecommand(ST7735_SLPOUT);  // display sleep off
+  delay(150);
+}
+
+void turnOffDisplay() {
+  screen.writecommand(ST7735_SLPIN);  // display sleep on
+  delay(150);
+  screen.writecommand(ST7735_DISPOFF);  // display off
+  delay(200);
+  digitalWrite( TFT_BL , LOW);  //backlight off
 }
 
 /*
