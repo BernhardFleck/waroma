@@ -17,7 +17,7 @@ $(document).ready(function () {
                 <span title="${ipAddress}" onclick="preSelectFormBy('${ipAddress}')" type="button"
                   id="${firstName + lastName + birthday}" class="">${firstName} ${lastName} ${birthday}</span>
                 <div class="progress">
-                  <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                  <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated waromaColor" role="progressbar"
                     aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">10%</div>
                 </div>
             </li>
