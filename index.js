@@ -41,15 +41,16 @@ io.on('connection', async (socket) => {
         connectedPatients.push({ firstName, lastName, birthday, ipAddress })
         io.emit("AddPatientConnection", firstName, lastName, birthday, ipAddress)
         console.log(`Add a new row in patients table: ${firstName} ${lastName} ${birthday} ${ipAddress} `)
-        availableDevices = getArrayWithoutValue(availableDevices, ipAddress); //TODO find a better way for removing values, without reassigning -> race condition!
+        reduceAvailableDevicesBy(ipAddress)
         io.emit("RemovePatientIpFromDeviceList", ipAddress)
     });
 });
 
-function getArrayWithoutValue(array, value) {
-    return array.filter(function (element) {
-        return element != value;
-    });
+function reduceAvailableDevicesBy(ipAddress) {
+    console.log(availableDevices)
+    let ipIndex = availableDevices.indexOf(ipAddress)
+    availableDevices.splice(ipIndex, 1)
+    console.log(availableDevices)
 }
 
 app.get("/connect/:ip", (request, response) => {
