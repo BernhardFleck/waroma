@@ -1,4 +1,3 @@
-#include "secrets.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -7,6 +6,9 @@
 #include <TFT_eSPI.h>
 #include <SPI.h>
 #include <uri/UriBraces.h>
+#include "esp_adc_cal.h"
+#include "adc.h"
+#include "secrets.h"
 
 TFT_eSPI screen = TFT_eSPI();
 WebServer server(80);
@@ -23,7 +25,7 @@ int screenHeight = screen.height();
 void loop() {
   server.handleClient();
 
-  delay(2000);
+  //delay(2000);
 }
 
 void setup() {
@@ -36,6 +38,8 @@ void setup() {
   setupEndpoints();
   screen.begin();
   screen.setRotation(2);
+  //TODO reset screen
+  setupADC();
 }
 
 void connectToWiFi() {
@@ -56,13 +60,13 @@ String getIpAsStringOf(const IPAddress& ipAddress) {
 void connectToServer() {
   HTTPClient httpClient;
   String request = "http://" + waroma_server + "/connect/" + ip;
-  delay(1000);
   httpClient.begin(request);
   httpClient.GET();
   httpClient.end();
 }
 
 void setupEndpoints() {
+  server.on("/battery", getBatteryLevel);
   server.on("/flashDisplay", flashDisplay);
   server.on(UriBraces("/displayRoom/{}"), []() {
     String number = server.pathArg(0);
@@ -116,6 +120,19 @@ void turnOffDisplay() {
   digitalWrite( TFT_BL , LOW);  //backlight off
 }
 
+void getBatteryLevel() {
+  char battArr[8];
+  getBattPerc().toCharArray(battArr, 3);
+  
+  create_json("batteryLevel", battArr);
+  server.send(200, "application/json", buffer);
+}
+
+void create_json(char *key, char *value) {  
+  jsonDocument.clear();  
+  jsonDocument[key] = value;
+  serializeJson(jsonDocument, buffer);
+}
 /*
   // for sending json data
   //server.on("/led", HTTP_POST, handlePost);

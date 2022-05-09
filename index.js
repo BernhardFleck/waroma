@@ -79,20 +79,11 @@ function updateClientsAboutConnectionOf(ipAddress) {
 
 async function flashDisplayOfWristbandBy(ipAddress) {
     console.log("flash wristband" + ipAddress)
-    /*
     const request = `http://${ipAddress}/flashDisplay`
     const response = await fetch(request)
     if (!response.ok)
         console.log('Error with request: ' + response.statusText);
-    */
-
-    //io.emit
-    /* 
-    //for reading data
-    const data = await response.json();
-    const jsonResult = JSON.stringify(data)
-    console.log(jsonResult)
-    */
+    //io.emit error?
 }
 
 app.get("/sendPatientToRoom", (request, response) => {
@@ -107,19 +98,25 @@ app.get("/sendPatientToRoom", (request, response) => {
 
 async function sendPatientToRoom(ipAddress, room) {
     console.log("request" + ipAddress + room)
-    /*
     const singleLetter = room.charAt(0)
     const request = `http://${ipAddress}/displayRoom/${singleLetter}`
     const response = await fetch(request);
     if (!response.ok)
         console.log('Error with request: ' + response.statusText)
-    */
+    
 }
 
 async function readBatteryLevelFrom(ipAddress) {
-    let batteryValue = Math.floor(Math.random() * 101);
+    const request = `http://${ipAddress}/battery`
+    const response = await fetch(request)
+    if (!response.ok)
+        console.log('Error with request: ' + response.statusText)
+    //io.emit error ?
+    const data = await response.json()
+    const stringifiedJson = JSON.stringify(data)
+    const parsedJson = JSON.parse(stringifiedJson)
+    const batteryValue = parsedJson.batteryLevel
     io.emit("batteryValue", ipAddress, batteryValue)
-    //console.log(`battery level read from ${ipAddress}: ${batteryValue}%`)
 }
 
 
