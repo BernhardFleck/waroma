@@ -59,10 +59,10 @@ function flashWristband() {
 }
 
 function assignPatientToWristband() {
-    let firstName = $('#firstNameField').val()
-    let lastName = $('#lastNameField').val()
-    let birthday = $('#birthdayField').val()
-    let ipAddress = $("#deviceList").val()
+    let firstName = $('#firstNameField').val().toUpperCase()
+    let lastName = $('#lastNameField').val().toUpperCase()
+    let birthday = $('#birthdayField').val().toUpperCase()
+    let ipAddress = $("#deviceList").val().toUpperCase()
 
     if (firstName && lastName && birthday && ipAddress) {
         let socket = io();
