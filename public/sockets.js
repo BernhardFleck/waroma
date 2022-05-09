@@ -11,6 +11,10 @@ $(document).ready(function () {
         }));
     });
 
+    socket.on('RemovePatientIpFromDeviceList', function (ipAddress) {
+        $('#deviceList option[value="' + ipAddress + '"]').remove()
+    });
+
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
         let newPatientEntry = $(`
             <button onclick="preSelectFormBy('${ipAddress}')" type="button" class="list-group-item list-group-item-action" style="cursor: pointer;">
@@ -35,6 +39,9 @@ $(document).ready(function () {
         batteryProgressBar.attr('aria-valuenow', `${batteryValue}`)
         batteryProgressBar.attr('style', `width: ${batteryValue}%`)
         batteryProgressBar.text(`${batteryValue}%`)
+
+        let ipInDeviceList = $('#deviceList option[value="' + ipAddress + '"]')
+        ipInDeviceList.text(`${ipAddress} (${batteryValue}%)`)
     });
 
 });
