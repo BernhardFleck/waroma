@@ -12,7 +12,7 @@ const BATTERY_TIME_INTERVAL = 5000;
 const fetch = require('node-fetch');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
-let connectedDevices = [] // format: ipAddresses only
+let availableDevices = [] // format: ipAddresses only
 let connectedPatients = [] // format: { firstName, lastName, birthday, ipAddress }
 
 app.use(express.static('public'));
@@ -23,7 +23,7 @@ io.on('connection', async (socket) => {
 
     socket.on('GetAllDevices', function () {
         console.log(`Print all devices onto the UI of client ${socketId}`)
-        connectedDevices.forEach(ipAddress =>
+        availableDevices.forEach(ipAddress =>
             io.to(socket.id).emit("AddIpAddress", ipAddress))
     });
 
@@ -41,14 +41,14 @@ io.on('connection', async (socket) => {
         connectedPatients.push({ firstName, lastName, birthday, ipAddress })
         io.emit("AddPatientConnection", firstName, lastName, birthday, ipAddress)
         console.log(`Add a new row in patients table: ${firstName} ${lastName} ${birthday} ${ipAddress} `)
-        //TODO remove ip from connectedDevices, and rename this array to availableDevices
+        //TODO remove ip from availableDevices
         setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
     });
 });
 
 app.get("/connect/:ip", (request, response) => {
     let ipAddress = request.params.ip
-    let databaseDoesNotContainIp = !connectedDevices.includes(ipAddress)
+    let databaseDoesNotContainIp = !availableDevices.includes(ipAddress)
 
     if (databaseDoesNotContainIp) {
         updateDatabaseByInserting(ipAddress)
@@ -61,7 +61,7 @@ app.get("/connect/:ip", (request, response) => {
 })
 
 function updateDatabaseByInserting(ipAddress) {
-    connectedDevices.push(ipAddress)
+    availableDevices.push(ipAddress)
 }
 
 function updateClientsAboutConnectionOf(ipAddress) {
@@ -111,7 +111,7 @@ async function sendPatientToRoom(ipAddress, room) {
 async function readBatteryLevelFrom(ipAddress) {
     let batteryValue = Math.floor(Math.random() * 101);
     io.emit("batteryValue", ipAddress, batteryValue)
-    console.log(`battery level read from ${ipAddress}: ${batteryValue}%`)
+    //console.log(`battery level read from ${ipAddress}: ${batteryValue}%`)
 }
 
 
