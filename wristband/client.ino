@@ -129,8 +129,10 @@ void turnOffDisplay() {
 
 void getBatteryLevel() {
   char battArr[8];
-  getBattPerc().toCharArray(battArr, 3);
-
+  String batteryLevel = getBattPerc();
+  if (batteryLevel.length() > 2)
+    batteryLevel = "100";
+  batteryLevel.toCharArray(battArr, 6);
   create_json("batteryLevel", battArr);
   server.send(200, "application/json", buffer);
 }
