@@ -103,7 +103,7 @@ async function sendPatientToRoom(ipAddress, room) {
     const response = await fetch(request);
     if (!response.ok)
         console.log('Error with request: ' + response.statusText)
-    
+
 }
 
 async function readBatteryLevelFrom(ipAddress) {
@@ -119,4 +119,12 @@ async function readBatteryLevelFrom(ipAddress) {
     io.emit("batteryValue", ipAddress, batteryValue)
 }
 
+app.get("/absence/:ip", (request, response) => {
+    let ipAddress = request.params.ip
+    console.log("toggle absence icon for " + ipAddress)
+    const ipIsConnected = connectedPatients.filter(patient => patient.ipAddress == ipAddress).length > 0
 
+    if (ipIsConnected)
+        io.emit("toggleAbsenceIconOnServer", ipAddress)
+    response.end()
+})

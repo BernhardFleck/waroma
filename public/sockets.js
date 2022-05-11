@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var socket = io();
-    
+
     socket.emit("GetAllDevices")
     socket.emit("GetAllConnectedPatients")
 
@@ -20,6 +20,7 @@ $(document).ready(function () {
             <button onclick="preSelectFormBy('${ipAddress}')" type="button" class="list-group-item list-group-item-action" style="cursor: pointer;">
                 <span title="${ipAddress}" 
                   id="${firstName + lastName + birthday}" class="">${firstName} ${lastName} ${birthday}</span>
+                <i id="AbsenceIconOf${ipAddress}" class="bi bi-hourglass-split d-none"></i>
                 <div class="progress">
                   <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated waromaColor" role="progressbar"
                     aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Battery Level is loading ...</div>
@@ -31,6 +32,12 @@ $(document).ready(function () {
             value: ipAddress,
             text: `${firstName} ${lastName} ${birthday}`
         }));
+    });
+
+    socket.on('toggleAbsenceIconOnServer', function (ipAddress) {
+        const absenceIcon = document.getElementById(`AbsenceIconOf${ipAddress}`)
+        const invisibleClass = 'd-none'
+        absenceIcon.classList.toggle(invisibleClass)
     });
 
     socket.on('batteryValue', function (ipAddress, batteryValue) {

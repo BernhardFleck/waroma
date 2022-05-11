@@ -65,9 +65,13 @@ String getIpAsStringOf(const IPAddress& ipAddress) {
 }
 
 void connectToServer() {
+  String connectionEndpoint = "http://" + waroma_server + "/connect/" + ip;
+  doGETRequestTo(connectionEndpoint);
+}
+
+void doGETRequestTo(String endpoint) {
   HTTPClient httpClient;
-  String request = "http://" + waroma_server + "/connect/" + ip;
-  httpClient.begin(request);
+  httpClient.begin(endpoint);
   httpClient.GET();
   httpClient.end();
 }
@@ -106,7 +110,7 @@ void displayRoom(String alphanumericLetter) {
   screen.println();
   screen.setTextSize(7); //max is 7, go into library for changing that
   screen.drawString((String)alphanumericLetter.charAt(0), screenWidth / 2, screenHeight / 2);
-  delay(10 * 1000); //TODO remove this timer
+  delay(10 * 1000); //TODO remove this timer!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   turnOffDisplay();
   server.send(200);
 }
@@ -148,12 +152,15 @@ void initButton()
   pinMode(TP_PWR_PIN, PULLUP);
   digitalWrite(TP_PWR_PIN, HIGH);
   button.begin();
-  button.onPressed(onPressed);
+  button.onPressed(toggleAbsenceIconOnServer);
   //button.onPressedFor(1500, onPressed);
 }
 
-void onPressed() {
-  Serial.println("Button has been pressed!");
+void toggleAbsenceIconOnServer() {
+  Serial.println("Show absence notification on server");
+  String notificationEndpoint = "http://" + waroma_server + "/absence/" + ip;
+  doGETRequestTo(notificationEndpoint);
+  //TODO show state on wristband
 }
 /*
   // for sending json data
