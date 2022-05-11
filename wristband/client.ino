@@ -6,10 +6,15 @@
 #include <TFT_eSPI.h>
 #include <SPI.h>
 #include <uri/UriBraces.h>
+#include <EasyButton.h>
 #include "esp_adc_cal.h"
 #include "adc.h"
 #include "secrets.h"
 
+#define TP_PIN_PIN          33
+#define TP_PWR_PIN          25
+
+EasyButton button(TP_PIN_PIN, 80, true, false);
 TFT_eSPI screen = TFT_eSPI();
 WebServer server(80);
 StaticJsonDocument<250> jsonDocument;
@@ -24,7 +29,7 @@ int screenHeight = screen.height();
 
 void loop() {
   server.handleClient();
-
+  button.read();
   //delay(2000);
 }
 
@@ -38,8 +43,10 @@ void setup() {
   setupEndpoints();
   screen.begin();
   screen.setRotation(2);
-  //TODO reset screen
+  turnOffDisplay();
+  //TODO reset screen or show welcome screen
   setupADC();
+  initButton();
 }
 
 void connectToWiFi() {
@@ -123,15 +130,28 @@ void turnOffDisplay() {
 void getBatteryLevel() {
   char battArr[8];
   getBattPerc().toCharArray(battArr, 3);
-  
+
   create_json("batteryLevel", battArr);
   server.send(200, "application/json", buffer);
 }
 
-void create_json(char *key, char *value) {  
-  jsonDocument.clear();  
+void create_json(char *key, char *value) {
+  jsonDocument.clear();
   jsonDocument[key] = value;
   serializeJson(jsonDocument, buffer);
+}
+
+void initButton()
+{
+  pinMode(TP_PWR_PIN, PULLUP);
+  digitalWrite(TP_PWR_PIN, HIGH);
+  button.begin();
+  button.onPressed(onPressed);
+  //button.onPressedFor(1500, onPressed);
+}
+
+void onPressed() {
+  Serial.println("Button has been pressed!");
 }
 /*
   // for sending json data
