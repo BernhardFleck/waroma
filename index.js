@@ -115,7 +115,8 @@ async function readBatteryLevelFrom(ipAddress) {
     const data = await response.json()
     const stringifiedJson = JSON.stringify(data)
     const parsedJson = JSON.parse(stringifiedJson)
-    const batteryValue = parsedJson.batteryLevel
+    const batteryValue = parsedJson.batteryLevel.replace('%', '')
+
     io.emit("batteryValue", ipAddress, batteryValue)
 }
 
