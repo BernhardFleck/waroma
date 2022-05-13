@@ -1,35 +1,35 @@
 {
-  border: 1px solid black;
-}
+    border: 1px solid black;
+  }
 
-.waromaColor{
-  background-color: rgb(0, 255, 168) !important;
-  color: black !important;
-  border-color: black !important;
-}
+  .waromaColor {
+    background-color: rgb(0, 255, 168) !important;
+    color: black !important;
+    border-color: black !important;
+  }
 
-.smallWidth {
-  width: 10px;
-}
+  .smallWidth {
+    width: 10px;
+  }
 
-.border-radius {
-  border-radius: 10px;
-}
+  .border-radius {
+    border-radius: 10px;
+  }
 
-.floatRight {
-  float: right;
-}
+  .floatRight {
+    float: right;
+  }
 
-.floatLeft {
-  float: left;
-}
+  .floatLeft {
+    float: left;
+  }
 
-.alignLeft {
-  margin-right: auto !important;
-  margin-left: 0 !important;
-}
+  .alignLeft {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+  }
 
-.alignRight {
-  margin-left: auto !important;
-  margin-right: 0 !important;
-}
+  .alignRight {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }

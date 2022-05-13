@@ -17,7 +17,7 @@ $(document).ready(function () {
 
     socket.on('AddPatientConnection', function (firstName, lastName, birthday, ipAddress) {
         let newPatientEntry = $(`
-            <button onclick="preSelectFormBy('${ipAddress}')" type="button" class="list-group-item list-group-item-action" style="cursor: pointer;">
+            <button id="PatientRow${ipAddress}" onclick="preSelectFormBy('${ipAddress}')" type="button" class="list-group-item list-group-item-action" style="cursor: pointer;">
                 <span title="${ipAddress}" 
                   id="${firstName + lastName + birthday}" class="">${firstName} ${lastName} ${birthday}</span>
                 <i id="AbsenceIconOf${ipAddress}" class="bi bi-hourglass-split d-none"></i>
@@ -36,8 +36,12 @@ $(document).ready(function () {
 
     socket.on('toggleAbsenceIconOnServer', function (ipAddress) {
         const absenceIcon = document.getElementById(`AbsenceIconOf${ipAddress}`)
+        const patientRow = document.getElementById(`PatientRow${ipAddress}`)
         const invisibleClass = 'd-none'
+        const colorizedBackgroundClass = 'bg-light'
+
         absenceIcon.classList.toggle(invisibleClass)
+        patientRow.classList.toggle(colorizedBackgroundClass)
     });
 
     socket.on('batteryValue', function (ipAddress, batteryValue) {
