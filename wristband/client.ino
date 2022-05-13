@@ -44,7 +44,6 @@ void setup() {
   screen.begin();
   screen.setRotation(2);
   turnOffDisplay();
-  //TODO reset screen or show welcome screen
   setupADC();
   initButton();
 }
@@ -134,8 +133,10 @@ void turnOffDisplay() {
 void getBatteryLevel() {
   char battArr[8];
   String batteryLevel = getBattPerc();
-  if (batteryLevel.length() > 3)
+  if (batteryLevel.length() > 3 && !batteryLevel.startsWith("-"))
     batteryLevel = "100";
+  if (batteryLevel.startsWith("-"))
+    batteryLevel = "0";
   batteryLevel.toCharArray(battArr, 6);
   create_json("batteryLevel", battArr);
   server.send(200, "application/json", buffer);
@@ -161,6 +162,7 @@ void toggleAbsenceIconOnServer() {
   String notificationEndpoint = "http://" + waroma_server + "/absence/" + ip;
   doGETRequestTo(notificationEndpoint);
   //TODO show state on wristband
+  //TODO auf long press umstellen
 }
 /*
   // for sending json data
