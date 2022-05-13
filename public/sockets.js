@@ -11,6 +11,13 @@ $(document).ready(function () {
         }));
     });
 
+    socket.on('Reconnect', function (ipAddress) {
+        const patientRow = document.getElementById(`PatientRow${ipAddress}`)
+        const redBackgroundClass = 'connectionLost'
+
+        patientRow.classList.remove(redBackgroundClass)
+    });
+
     socket.on('RemovePatientIpFromDeviceList', function (ipAddress) {
         $('#deviceList option[value="' + ipAddress + '"]').remove()
     });
@@ -53,6 +60,13 @@ $(document).ready(function () {
 
         let ipInDeviceList = $('#deviceList option[value="' + ipAddress + '"]')
         ipInDeviceList.text(`${ipAddress} (${batteryValue}%)`)
+    });
+
+    socket.on('ConnectionLost', function (ipAddress) {
+        const patientRow = document.getElementById(`PatientRow${ipAddress}`)
+        const redBackgroundClass = 'connectionLost'
+
+        patientRow.classList.add(redBackgroundClass)
     });
 
 });

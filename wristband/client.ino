@@ -76,6 +76,7 @@ void doGETRequestTo(String endpoint) {
 }
 
 void setupEndpoints() {
+  server.on("/connectionCheck", send200OK);
   server.on("/battery", getBatteryLevel);
   server.on("/flashDisplay", flashDisplay);
   server.on(UriBraces("/displayRoom/{}"), []() {
@@ -83,6 +84,10 @@ void setupEndpoints() {
     displayRoom(number);
   });
   server.begin();
+}
+
+void send200OK() {
+  server.send(200);
 }
 
 void flashDisplay() {

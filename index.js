@@ -9,6 +9,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 const BATTERY_TIME_INTERVAL = 5000;
+const CONNECTION_CHECK_TIME_INTERVAL = 1000 * 60; // 1min
 const fetch = require('node-fetch');
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
@@ -58,32 +59,31 @@ app.get("/connect/:ip", (request, response) => {
     let databaseDoesNotContainIp = !availableDevices.includes(ipAddress)
 
     if (databaseDoesNotContainIp) {
-        updateDatabaseByInserting(ipAddress)
-        updateClientsAboutConnectionOf(ipAddress)
-        flashDisplayOfWristbandBy(ipAddress)
-        console.log("wristband connected")
+        availableDevices.push(ipAddress)
+        const ipIsConnected = connectedPatients.filter(patient => patient.ipAddress == ipAddress).length > 0
+        if (ipIsConnected)
+            io.emit("Reconnect", ipAddress)
+        else {
+            io.emit("AddIpAddress", ipAddress)
+            setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
+            setInterval(() => checkConnectionOf(ipAddress), CONNECTION_CHECK_TIME_INTERVAL);
+            console.log(`Wristband with IP Address ${ipAddress} trys to connect`)
+            flashDisplayOfWristbandBy(ipAddress)
+            console.log("wristband connected")
+        }
     }
-
     response.end()
 })
 
-function updateDatabaseByInserting(ipAddress) {
-    availableDevices.push(ipAddress)
-}
-
-function updateClientsAboutConnectionOf(ipAddress) {
-    io.emit("AddIpAddress", ipAddress)
-    setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
-    console.log(`Wristband with IP Address ${ipAddress} trys to connect`)
-}
-
 async function flashDisplayOfWristbandBy(ipAddress) {
-    console.log("flash wristband" + ipAddress)
-    const request = `http://${ipAddress}/flashDisplay`
-    const response = await fetch(request)
-    if (!response.ok)
-        console.log('Error with request: ' + response.statusText);
-    //io.emit error?
+    try {
+        console.log("flash wristband" + ipAddress)
+        const request = `http://${ipAddress}/flashDisplay`
+        const response = await fetch(request)
+        if (!response.ok)
+            console.log('Error with request: ' + response.statusText);
+        //io.emit error?
+    } catch (error) { }
 }
 
 app.get("/sendPatientToRoom", (request, response) => {
@@ -97,27 +97,42 @@ app.get("/sendPatientToRoom", (request, response) => {
 })
 
 async function sendPatientToRoom(ipAddress, room) {
-    console.log("request" + ipAddress + room)
-    const singleLetter = room.charAt(0)
-    const request = `http://${ipAddress}/displayRoom/${singleLetter}`
-    const response = await fetch(request);
-    if (!response.ok)
-        console.log('Error with request: ' + response.statusText)
-
+    try {
+        console.log("request" + ipAddress + room)
+        const singleLetter = room.charAt(0)
+        const request = `http://${ipAddress}/displayRoom/${singleLetter}`
+        const response = await fetch(request);
+        if (!response.ok)
+            console.log('Error with request: ' + response.statusText)
+    } catch (error) { }
 }
 
 async function readBatteryLevelFrom(ipAddress) {
-    const request = `http://${ipAddress}/battery`
-    const response = await fetch(request)
-    if (!response.ok)
-        console.log('Error with request: ' + response.statusText)
-    //io.emit error ?
-    const data = await response.json()
-    const stringifiedJson = JSON.stringify(data)
-    const parsedJson = JSON.parse(stringifiedJson)
-    const batteryValue = parsedJson.batteryLevel.replace('%', '')
+    try {
+        const request = `http://${ipAddress}/battery`
+        const response = await fetch(request)
+        if (!response.ok)
+            console.log('Error with request: ' + response.statusText)
+        //io.emit error ?
+        const data = await response.json()
+        const stringifiedJson = JSON.stringify(data)
+        const parsedJson = JSON.parse(stringifiedJson)
+        const batteryValue = parsedJson.batteryLevel.replace('%', '')
 
-    io.emit("batteryValue", ipAddress, batteryValue)
+        io.emit("batteryValue", ipAddress, batteryValue)
+    } catch (error) { }
+}
+
+async function checkConnectionOf(ipAddress) {
+    try {
+        console.log(`Check connection to ${ipAddress}`)
+        const request = `http://${ipAddress}/connectionCheck`
+        const response = await fetch(request)
+        if (!response.ok)
+            io.emit("ConnectionLost", ipAddress)
+    } catch (error) {
+        io.emit("ConnectionLost", ipAddress)
+    }
 }
 
 app.get("/absence/:ip", (request, response) => {
