@@ -1,5 +1,5 @@
+var socket = io();
 $(document).ready(function () {
-    var socket = io();
 
     socket.emit("GetAllDevices")
     socket.emit("GetAllConnectedPatients")
@@ -69,18 +69,29 @@ $(document).ready(function () {
         patientRow.classList.add(redBackgroundClass)
     });
 
+    socket.on('PreSelectReturnForm', function (ipAddress, firstName, lastName, birthday) {
+        $('#returnFirstName').val(firstName)
+        $('#returnLastName').val(lastName)
+        $('#returnBirthday').val(birthday)
+        $('#returnIpAddress').val(ipAddress)
+    });
+
+    socket.on('WristbandReturned', function (ipAddress) {
+        const patientRow = document.getElementById(`PatientRow${ipAddress}`)
+        patientRow.remove()
+    });
+
 });
 
 function preSelectFormBy(ipAddress) {
+    socket.emit("PreSelectReturnForm", ipAddress)
     $('#patientsDropdown option[value="' + ipAddress + '"]').prop('selected', true)
 }
 
 function flashWristband() {
     let selectedIP = $("#deviceList").val()
-    if (selectedIP) {
-        let socket = io();
+    if (selectedIP)
         socket.emit("flashWristband", selectedIP)
-    }
 }
 
 function assignPatientToWristband() {
@@ -89,9 +100,7 @@ function assignPatientToWristband() {
     let birthday = $('#birthdayField').val().toUpperCase()
     let ipAddress = $("#deviceList").val().toUpperCase()
 
-    if (firstName && lastName && birthday && ipAddress) {
-        let socket = io();
+    if (firstName && lastName && birthday && ipAddress)
         socket.emit("assignPatientToWristband", firstName, lastName, birthday, ipAddress)
-    }
 }
 

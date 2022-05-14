@@ -15,6 +15,7 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let availableDevices = [] // format: ipAddresses only
 let connectedPatients = [] // format: { firstName, lastName, birthday, ipAddress }
+let allIntervals = [] // format {ipAddress, intervalId}
 
 app.use(express.static('public'));
 http.listen(PORT, () => console.log(`server listening on port ${PORT}!`));
@@ -45,6 +46,13 @@ io.on('connection', async (socket) => {
         reduceAvailableDevicesBy(ipAddress)
         io.emit("RemovePatientIpFromDeviceList", ipAddress)
     });
+
+    socket.on('PreSelectReturnForm', function (ipAddress) {
+        console.log(`Get data of ${ipAddress} onto the UI of client ${socketId}`)
+        let patient = connectedPatients.filter(patient => patient.ipAddress == ipAddress)[0]
+        io.to(socket.id).emit("PreSelectReturnForm", patient.ipAddress, patient.firstName, patient.lastName, patient.birthday)
+    });
+
 });
 
 function reduceAvailableDevicesBy(ipAddress) {
@@ -65,11 +73,11 @@ app.get("/connect/:ip", (request, response) => {
             io.emit("Reconnect", ipAddress)
         else {
             io.emit("AddIpAddress", ipAddress)
-            setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
-            setInterval(() => checkConnectionOf(ipAddress), CONNECTION_CHECK_TIME_INTERVAL);
-            console.log(`Wristband with IP Address ${ipAddress} trys to connect`)
+            let intervalId = setInterval(() => readBatteryLevelFrom(ipAddress), BATTERY_TIME_INTERVAL);
+            allIntervals.push({ ipAddress, intervalId })
+            intervalId = setInterval(() => checkConnectionOf(ipAddress), CONNECTION_CHECK_TIME_INTERVAL);
+            allIntervals.push({ ipAddress, intervalId })
             flashDisplayOfWristbandBy(ipAddress)
-            console.log("wristband connected")
         }
     }
     response.end()
@@ -144,3 +152,29 @@ app.get("/absence/:ip", (request, response) => {
         io.emit("toggleAbsenceIconOnServer", ipAddress)
     response.end()
 })
+
+app.get("/returnWristband", (request, response) => {
+    let ipAddress = request.query.returnIpAddress
+    reduceConnectedPatientsBy(ipAddress)
+    endTimeIntervallsOf(ipAddress)
+    io.emit("WristbandReturned", ipAddress)
+    response.end()
+})
+
+function reduceConnectedPatientsBy(ipAddress) {
+    let patientIndex = connectedPatients.findIndex(patient => patient.ipAddress == ipAddress)
+    connectedPatients.splice(patientIndex, 1)
+}
+
+function endTimeIntervallsOf(ipAddress) {
+    let patientIntervals = allIntervals.filter(interval => interval.ipAddress == ipAddress)
+    patientIntervals.forEach(row => {
+        clearInterval(row.intervalId)
+        reduceIntervalsBy(row.intervalId)
+    })
+}
+
+function reduceIntervalsBy(intervalId) {
+    let intervalIndex = allIntervals.findIndex(row => row.intervalId == intervalId)
+    allIntervals.splice(intervalIndex, 1)
+}
