@@ -27,6 +27,8 @@ String ip;
 const String waroma_server = "192.168.0.185:3000";
 int screenWidth = screen.width();
 int screenHeight = screen.height();
+boolean isAbsent = false;
+int buttonClickCounter = 0;
 
 void loop() {
   server.handleClient();
@@ -47,7 +49,7 @@ void setup() {
   setupADC();
   initButton();
   Serial.println("Show Logo");
-  showWaromaLogo();
+  showWaromaLogoForSeconds(3);
 }
 
 void connectToWiFi() {
@@ -161,24 +163,57 @@ void initButton()
   pinMode(TP_PWR_PIN, PULLUP);
   digitalWrite(TP_PWR_PIN, HIGH);
   button.begin();
-  button.onPressed(toggleAbsenceIconOnServer);
-  //button.onPressedFor(1500, onPressed);
+  button.onPressed(displayMenu);
+  button.onPressedFor(5000, toggleAbsenceIconOnServer);
+}
+
+void displayMenu() {
+  if (buttonClickCounter == 0)
+    showWaromaLogoForSeconds(10);
+
+  if (buttonClickCounter == 1)
+    if (isAbsent) display("You are absent", 1);
+    else display("You are Present", 1);
+
+  if (buttonClickCounter == 2) {
+    display("Press 5 seconds ...", 3);
+    display("... for being absent", 3);
+  }
+
+  buttonClickCounter++;
+  if (buttonClickCounter > 2) buttonClickCounter = 0;
+}
+
+
+void showWaromaLogoForSeconds(int sec) {
+  screen.init();
+  screen.fillScreen(TFT_BLACK);
+  screen.setRotation(1);
+  screen.setSwapBytes(true);
+  screen.pushImage(0, 20,  160, 40, waroma_logo);
+  delay(1000 * sec);
+  turnOffDisplay();
+}
+
+void display(String message, int sec) {
+  screen.setRotation(1);
+  screen.setCursor(0, 0);
+  screen.fillScreen(TFT_BLACK);
+  screen.setTextColor(TFT_WHITE, TFT_BLACK);
+  screen.setTextDatum(MC_DATUM);
+  screen.setTextSize(3);
+  turnOnDisplay();
+  screen.print(message);
+  delay(sec * 1000);
+  turnOffDisplay();
+  server.send(200);
 }
 
 void toggleAbsenceIconOnServer() {
   Serial.println("Show absence notification on server");
   String notificationEndpoint = "http://" + waroma_server + "/absence/" + ip;
   doGETRequestTo(notificationEndpoint);
-  //TODO show state on wristband
-  //TODO auf long press umstellen
-}
-
-void showWaromaLogo() {
-  screen.init();
-  screen.fillScreen(TFT_BLACK);
-  screen.setRotation(1);
-  screen.setSwapBytes(true);
-  screen.pushImage(0, 20,  160, 40, waroma_logo);
-  delay(3000);
-  turnOffDisplay();
+  isAbsent = !isAbsent;
+  if (isAbsent) display("Absent", 1);
+  else display("Present", 1);
 }
