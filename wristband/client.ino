@@ -43,22 +43,11 @@ void setup() {
   Serial.println((String)"Connected to " + waroma_server);
   setupEndpoints();
   screen.begin();
-  screen.setRotation(2);
   turnOffDisplay();
   setupADC();
   initButton();
   Serial.println("Show Logo");
   showWaromaLogo();
-}
-
-void showWaromaLogo() {
-  screen.init();
-  screen.fillScreen(TFT_BLACK);
-  screen.setRotation(1);
-  screen.setSwapBytes(true);
-  screen.pushImage(0, 20,  160, 40, waroma_logo);
-  delay(10000);
-  turnOffDisplay();
 }
 
 void connectToWiFi() {
@@ -118,6 +107,7 @@ void flashDisplay() {
 
 void displayRoom(String alphanumericLetter) {
   turnOnDisplay();
+  screen.setRotation(0);
   screen.setCursor(0, 0);
   screen.fillScreen(TFT_BLACK);
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -181,4 +171,14 @@ void toggleAbsenceIconOnServer() {
   doGETRequestTo(notificationEndpoint);
   //TODO show state on wristband
   //TODO auf long press umstellen
+}
+
+void showWaromaLogo() {
+  screen.init();
+  screen.fillScreen(TFT_BLACK);
+  screen.setRotation(1);
+  screen.setSwapBytes(true);
+  screen.pushImage(0, 20,  160, 40, waroma_logo);
+  delay(3000);
+  turnOffDisplay();
 }
