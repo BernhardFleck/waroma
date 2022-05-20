@@ -108,7 +108,6 @@ void flashDisplay() {
 }
 
 void displayRoom(String alphanumericLetter) {
-  turnOnDisplay();
   screen.setRotation(0);
   screen.setCursor(0, 0);
   screen.fillScreen(TFT_BLACK);
@@ -119,6 +118,7 @@ void displayRoom(String alphanumericLetter) {
   screen.println();
   screen.setTextSize(7); //max is 7, go into library for changing that
   screen.drawString((String)alphanumericLetter.charAt(0), screenWidth / 2, screenHeight / 2);
+  turnOnDisplay();
   delay(10 * 1000); //TODO remove this timer!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   turnOffDisplay();
   server.send(200);
@@ -191,6 +191,7 @@ void showWaromaLogoForSeconds(int sec) {
   screen.setRotation(1);
   screen.setSwapBytes(true);
   screen.pushImage(0, 20,  160, 40, waroma_logo);
+  turnOnDisplay();
   delay(1000 * sec);
   turnOffDisplay();
 }
@@ -202,8 +203,8 @@ void display(String message, int sec) {
   screen.setTextColor(TFT_WHITE, TFT_BLACK);
   screen.setTextDatum(MC_DATUM);
   screen.setTextSize(3);
-  turnOnDisplay();
   screen.print(message);
+  turnOnDisplay();
   delay(sec * 1000);
   turnOffDisplay();
   server.send(200);
