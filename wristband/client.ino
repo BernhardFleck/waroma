@@ -7,6 +7,7 @@
 #include <SPI.h>
 #include <uri/UriBraces.h>
 #include <EasyButton.h>
+#include <ArduinoOTA.h>
 #include "esp_adc_cal.h"
 #include "adc.h"
 #include "secrets.h"
@@ -20,7 +21,6 @@ TFT_eSPI screen = TFT_eSPI();
 WebServer server(80);
 StaticJsonDocument<250> jsonDocument;
 char buffer[250];
-float temperature;
 String response = "";
 DynamicJsonDocument doc(2048);
 String ip;
@@ -33,6 +33,7 @@ int buttonClickCounter = 0;
 void loop() {
   server.handleClient();
   button.read();
+  ArduinoOTA.handle();
   //delay(2000);
 }
 
@@ -41,6 +42,7 @@ void setup() {
   Serial.println("Connecting to Wi-Fi");
   connectToWiFi();
   Serial.println("Connected! IP Address: " + ip);
+  setupOTA();
   connectToServer();
   Serial.println((String)"Connected to " + waroma_server);
   setupEndpoints();
@@ -217,4 +219,35 @@ void toggleAbsenceIconOnServer() {
   isAbsent = !isAbsent;
   if (isAbsent) display("Absent", 1);
   else display("Present", 1);
+}
+
+void setupOTA() {
+  ArduinoOTA.setHostname("Band1");
+  ArduinoOTA
+  .onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH)
+      type = "sketch";
+    else // U_SPIFFS
+      type = "filesystem";
+
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  })
+  .onEnd([]() {
+    Serial.println("\nEnd");
+  })
+  .onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  })
+  .onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+
+  ArduinoOTA.begin();
 }
