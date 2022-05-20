@@ -10,6 +10,7 @@
 #include "esp_adc_cal.h"
 #include "adc.h"
 #include "secrets.h"
+#include "waroma_logo.h"
 
 #define TP_PIN_PIN          33
 #define TP_PWR_PIN          25
@@ -46,6 +47,18 @@ void setup() {
   turnOffDisplay();
   setupADC();
   initButton();
+  Serial.println("Show Logo");
+  showWaromaLogo();
+}
+
+void showWaromaLogo() {
+  screen.init();
+  screen.fillScreen(TFT_BLACK);
+  screen.setRotation(1);
+  screen.setSwapBytes(true);
+  screen.pushImage(0, 20,  160, 40, waroma_logo);
+  delay(10000);
+  turnOffDisplay();
 }
 
 void connectToWiFi() {
@@ -169,77 +182,3 @@ void toggleAbsenceIconOnServer() {
   //TODO show state on wristband
   //TODO auf long press umstellen
 }
-/*
-  // for sending json data
-  //server.on("/led", HTTP_POST, handlePost);
-
-  void getData() {
-  Serial.println("Get BME280 Sensor Data");
-  jsonDocument.clear();
-  add_json_object("temperature", temperature, "°C");
-  serializeJson(jsonDocument, buffer);
-  server.send(200, "application/json", buffer);
-  }
-
-  void add_json_object(char *tag, float value, char *unit) {
-  JsonObject obj = jsonDocument.createNestedObject();
-  obj["type"] = tag;
-  obj["value"] = value;
-  obj["unit"] = unit;
-  }
-
-  void handlePost() {
-  if (server.hasArg("plain") == false) {
-  }
-  String body = server.arg("plain");
-  deserializeJson(jsonDocument, body);
-
-  int red_value = jsonDocument["red"];
-  int green_value = jsonDocument["green"];
-  int blue_value = jsonDocument["blue"];
-
-  server.send(200, "application/json", "{}");
-  }
-
-
-  //for sending json data to server
-  //server.on("/temperature", getTemperature);
-
-  void getTemperature() {
-  Serial.println("Get temperature");
-  create_json("temperature", 15, "°C");
-  server.send(200, "application/json", buffer);
-  }
-
-  void create_json(char *tag, float value, char *unit) {
-  jsonDocument.clear();
-  jsonDocument["type"] = tag;
-  jsonDocument["value"] = value;
-  jsonDocument["unit"] = unit;
-  serializeJson(jsonDocument, buffer);
-  }
-
-
-  // for requesting json data from server
-  HTTPClient http;
-  String request = "http://" + waroma_server + "/connect/" + ip;
-  delay(1000);
-  http.begin(request);
-  http.GET();
-
-    // The rest is for retrieving data
-    //Response from server
-    response = http.getString();
-    //Parse JSON, read error if any
-    DeserializationError error = deserializeJson(doc, response);
-    if(error) {
-     Serial.print(F("deserializeJson() failed: "));
-     Serial.println(error.f_str());
-     return;
-    }
-    //Print parsed value on Serial Monitor
-    Serial.println(doc["value"].as<char*>());
-
-  //Close connection
-  http.end();
-*/
