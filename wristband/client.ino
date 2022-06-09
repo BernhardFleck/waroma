@@ -24,7 +24,7 @@ char buffer[250];
 String response = "";
 DynamicJsonDocument doc(2048);
 String ip;
-const String waroma_server = "192.168.0.185:3000";
+const String waroma_server = "192.168.43.61:3000";
 int screenWidth = screen.width();
 int screenHeight = screen.height();
 boolean isAbsent = false;
