@@ -158,7 +158,10 @@ app.get("/absence/:ip", (request, response) => {
 app.get("/returnWristband", (request, response) => {
     let ipAddress = request.query.returnIpAddress
     reduceConnectedPatientsBy(ipAddress)
+    reduceAvailableDevicesBy(ipAddress)
     endTimeIntervallsOf(ipAddress)
+    resetWristbandBy(ipAddress)
+
     io.emit("WristbandReturned", ipAddress)
     response.end()
 })
@@ -179,4 +182,13 @@ function endTimeIntervallsOf(ipAddress) {
 function reduceIntervalsBy(intervalId) {
     let intervalIndex = allIntervals.findIndex(row => row.intervalId == intervalId)
     allIntervals.splice(intervalIndex, 1)
+}
+
+async function resetWristbandBy(ipAddress) {
+    try {
+        const request = `http://${ipAddress}/reset`
+        const response = await fetch(request)
+        if (!response.ok)
+            console.log('Error with request: ' + response.statusText)
+    } catch (error) { }
 }
