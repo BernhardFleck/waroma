@@ -167,19 +167,27 @@ void initButton()
   button.begin();
   button.onPressed(displayMenu);
   button.onPressedFor(5000, toggleAbsenceIconOnServer);
+  //button.onSequence(2, 1000, resetWristband);
+}
+
+void resetWristband() {
+  isAbsent = false;
+  display("Reset", 1);
+  delay(1000);
+  setup();
 }
 
 void displayMenu() {
   if (buttonClickCounter == 0)
-    showWaromaLogoForSeconds(10);
+    showWaromaLogoForSeconds(2);
 
   if (buttonClickCounter == 1)
     if (isAbsent) display("You are absent", 1);
     else display("You are Present", 1);
 
   if (buttonClickCounter == 2) {
-    display("Press 5 seconds ...", 3);
-    display("... for being absent", 3);
+    display("Press 5\nseconds\n...", 3);
+    display("to be\n absent", 3);
   }
 
   buttonClickCounter++;
