@@ -30,7 +30,11 @@ $(document).ready(function () {
                 <i id="AbsenceIconOf${ipAddress}" class="bi bi-hourglass-split d-none"></i>
                 <div class="progress">
                   <div id="BatteryOf${ipAddress}" class="progress-bar progress-bar-striped progress-bar-animated waromaColor" role="progressbar"
-                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">Battery Level is loading ...</div>
+                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <i class="bi bi-battery-charging">
+                            Battery Level is loading ...
+                        </i>
+                    </div>
                 </div>
             </button>
         `)
@@ -54,9 +58,10 @@ $(document).ready(function () {
     socket.on('batteryValue', function (ipAddress, batteryValue) {
         let idText = `BatteryOf${ipAddress}`
         let batteryProgressBar = $('div[id="' + idText + '"]')
+        let batteryProgressBarText = $('div[id="' + idText + '"] i')
         batteryProgressBar.attr('aria-valuenow', `${batteryValue}`)
         batteryProgressBar.attr('style', `width: ${batteryValue}%`)
-        batteryProgressBar.text(`${batteryValue}%`)
+        batteryProgressBarText.text(` ${batteryValue}% `)
 
         let ipInDeviceList = $('#deviceList option[value="' + ipAddress + '"]')
         ipInDeviceList.text(`${ipAddress} (${batteryValue}%)`)
