@@ -185,11 +185,14 @@ void displayMenu() {
 
   if (buttonClickCounter == 2) {
     display("Press 5\nseconds\n...", 3);
-    display("to be\n absent", 3);
+    display("to be\nabsent", 3);
   }
 
+  if (buttonClickCounter == 3)
+    display(ip, 1);
+
   buttonClickCounter++;
-  if (buttonClickCounter > 2) buttonClickCounter = 0;
+  if (buttonClickCounter > 3) buttonClickCounter = 0;
 }
 
 
