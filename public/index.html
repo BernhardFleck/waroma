@@ -2,32 +2,160 @@
 <html lang="en">
 
 <head>
-    <title>WAROMA</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>WAROMA</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="index.css" rel="stylesheet" />
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
-    <!-- jQuery first, then Bootstrap JS (includes popper) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+  <!-- jQuery first, then Bootstrap JS (includes popper) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
 
-    <!-- Socket.io client code. The file is served by our Node.js server because we installed the module -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="sockets.js"></script>
+  <!-- Socket.io client code. The file is served by our Node.js server because we installed the module -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="sockets.js"></script>
 </head>
 
-<body>
+<body class="bg-light">
+  <nav class="navbar sticky-top navbar-light bg-dark">
+    <a class="navbar-brand p-1" href="#">
+      <img src="waromaLogoSmall.png" width="175px" height="30px" class="rounded float-left" alt="">
+    </a>
+  </nav>
 
-    <h1>Connected devices:</h1>
-    <ul id="deviceList">
-    </ul>
-    
+  <div class="container-fluid mt-5">
+    <div class="row">
+
+      <div class="col col-lg-6">
+        <div class="container alignRight">
+          <div class="row card p-3 m-1">
+            <h3>Assigned Patients:</h3>
+
+            <ul id="connectedPatients" class="list-group list-group-flush">
+              <!-- Content will be generated via socket -->
+            </ul>
+
+          </div>
+        </div>
+      </div>
+      <div class="col col-lg-6">
+        <div class="container alignLeft">
+
+          <!-- Connect Patient To Wristband -->
+          <div class="row card p-3 mb-3">
+            <h3>Assign Wristband:</h3>
+            <div class="input-group pb-1">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">First Name:</span>
+              </div>
+              <input id="firstNameField" name="firstName" type="text" class="form-control" placeholder="Jane"
+                aria-label="FirstName" aria-describedby="basic-addon1" />
+
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Last Name:</span>
+              </div>
+              <input id="lastNameField" name="lastName" type="text" class="form-control" placeholder="Doe"
+                aria-label="LastName" aria-describedby="basic-addon1" />
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Birthday:</span>
+              </div>
+              <input id="birthdayField" name="birthday" type="date" class="form-control" aria-label="Birthday"
+                aria-describedby="basic-addon1" />
+
+              <select name="deviceList" id="deviceList" class="custom-select">
+                <!-- Content will be provided via socket -->
+              </select>
+
+              <div class="input-group-append">
+                <button onclick="flashWristband()" class="btn btn-outline-secondary">Flash</button>
+              </div>
+
+              <div class="input-group-append">
+                <button onclick="assignPatientToWristband()" class="btn btn-primary waromaColor">Send</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Send Patient To Room  -->
+          <div class="row card p-3 mb-3">
+            <form method="get" action="/sendPatientToRoom" target="hiddenFrame">
+              <h3>Notify Patient:</h3>
+              <div class="input-group">
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Room</span>
+                </div>
+
+                <input name="roomNumberField" maxlength="1" placeholder="1" type="text" class="form-control smallWidth"
+                  aria-label="Room number" aria-describedby="basic-addon1" />
+
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">Patient:</span>
+                </div>
+
+                <select name="patientsDropdown" id="patientsDropdown" class="custom-select">
+                  <!-- Content will be provided via socket -->
+                </select>
+
+                <div class="input-group-append">
+                  <button type="submit" value="Submit" class="btn btn-primary waromaColor">Send</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Return of wristbands  -->
+          <div class="row card p-3 mb-3">
+            <form method="get" action="/returnWristband" target="hiddenFrame">
+              <h3>Return Wristband:</h3>
+              <div class="form-group row">
+                <label for="returnFirstName" class="col-sm-2 col-md-2 col-form-label">First Name:</label>
+                <div class="col-sm-10 col-md-4">
+                  <input name="returnFirstName" type="text" readonly class="form-control-plaintext" id="returnFirstName"
+                    value="Please select a patient" />
+                </div>
+                <label for="returnLastName" class="col-sm-2 col-md-2 col-form-label">Last Name:</label>
+                <div class="col-sm-10 col-md-4">
+                  <input name="returnLastName" type="text" readonly class="form-control-plaintext" id="returnLastName"
+                    value="Please select a patient" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="returnBirthday" class="col-sm-2 col-md-2 col-form-label">Birthday:</label>
+                <div class="col-sm-10 col-md-4">
+                  <input name="returnBirthday" type="date" readonly class="form-control-plaintext" id="returnBirthday"
+                    aria-label="Birthday" aria-describedby="basic-addon1" />
+                </div>
+                <label for="returnIpAddress" class="col-sm-2 col-md-2 col-form-label">ID:</label>
+                <div class="col-sm-10 col-md-4">
+                  <input name="returnIpAddress" type="text" readonly class="form-control-plaintext" id="returnIpAddress"
+                    aria-label="ID" aria-describedby="basic-addon1" value="Please select a patient" />
+                </div>
+              </div>
+              <div class="form-group row"">
+                <button type=" submit" value="Submit" class="btn btn-primary waromaColor">Send</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <iframe name="hiddenFrame" style="display: none;"></iframe>
 </body>
 
 </html>
