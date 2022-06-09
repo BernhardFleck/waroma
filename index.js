@@ -138,6 +138,8 @@ async function checkConnectionOf(ipAddress) {
         const response = await fetch(request)
         if (!response.ok)
             io.emit("ConnectionLost", ipAddress)
+        else
+            io.emit("Reconnect", ipAddress)
     } catch (error) {
         io.emit("ConnectionLost", ipAddress)
     }
