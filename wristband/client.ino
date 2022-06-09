@@ -43,8 +43,6 @@ void setup() {
   connectToWiFi();
   Serial.println("Connected! IP Address: " + ip);
   setupOTA();
-  connectToServer();
-  Serial.println((String)"Connected to " + waroma_server);
   setupEndpoints();
   screen.begin();
   turnOffDisplay();
@@ -164,9 +162,27 @@ void initButton()
   pinMode(TP_PWR_PIN, PULLUP);
   digitalWrite(TP_PWR_PIN, HIGH);
   button.begin();
-  button.onPressed(displayMenu);
-  button.onPressedFor(5000, toggleAbsenceIconOnServer);
+  button.onPressed(displayBoothMessage);
+  //button.onPressedFor(5000, toggleAbsenceIconOnServer);
   //button.onSequence(2, 1000, resetWristband);
+}
+
+boolean isVisible = true;
+void displayBoothMessage() {
+  if (isVisible) {
+    screen.setRotation(3);
+    screen.setCursor(5, 20);
+    screen.fillScreen(TFT_BLACK);
+    screen.setTextColor(TFT_WHITE, TFT_BLACK);
+    screen.setTextDatum(MC_DATUM);
+    screen.setTextSize(5);
+    screen.print("BOOTH");
+
+    turnOnDisplay();
+  }
+  else turnOffDisplay();
+
+  isVisible = !isVisible;
 }
 
 void resetWristband() {
@@ -194,7 +210,6 @@ void displayMenu() {
   buttonClickCounter++;
   if (buttonClickCounter > 3) buttonClickCounter = 0;
 }
-
 
 void showWaromaLogoForSeconds(int sec) {
   screen.init();
