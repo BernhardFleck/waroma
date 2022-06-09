@@ -84,6 +84,7 @@ void doGETRequestTo(String endpoint) {
 void setupEndpoints() {
   server.on("/connectionCheck", send200OK);
   server.on("/battery", getBatteryLevel);
+  server.on("/reset", resetWristband);
   server.on("/flashDisplay", flashDisplay);
   server.on(UriBraces("/displayRoom/{}"), []() {
     String number = server.pathArg(0);
@@ -121,8 +122,6 @@ void displayRoom(String alphanumericLetter) {
   screen.setTextSize(7); //max is 7, go into library for changing that
   screen.drawString((String)alphanumericLetter.charAt(0), screenWidth / 2, screenHeight / 2);
   turnOnDisplay();
-  delay(10 * 1000); //TODO remove this timer!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  turnOffDisplay();
   server.send(200);
 }
 
@@ -172,8 +171,7 @@ void initButton()
 
 void resetWristband() {
   isAbsent = false;
-  display("Reset", 1);
-  delay(1000);
+  display("Reset", 2);
   setup();
 }
 
